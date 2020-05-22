@@ -30,7 +30,7 @@ class Library:
     def add_user(self,user):
         self.names.append('user')
 
-list1=['Physics','Chemistry','Maths-I','Maths_II','English','Ethics and Values','Sports']
+list1=['Physics','Chemistry','Maths-I','Maths_II','English','Ethics and Values','Sports','Biology']
 names_list=['Sunil','Veeerendra','Saran','Kotesh','Rajesh','Bhaskar','Siva nagu','Karthik','Kesav','Surendra','Naveen']
 books_lender_list={}
 books_timeline={}
