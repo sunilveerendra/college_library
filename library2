@@ -1,0 +1,49 @@
+
+"""
+Created on Thu May 21 15:23:44 2020
+
+@author: Sunil veerendra
+"""
+from datetime import datetime
+from datetime import timedelta
+#library books management
+class Library:
+    def __init__(self,books,names):
+        self.books=books
+        self.names=names
+    def borrow_books(self,book,name,case):
+    
+        if case.upper()=='BORROW':
+            if book in self.books:
+                if name in self.names:
+                    books_lender_list.update({name:book})
+                    print(str(books_lender_list))
+                    books_timeline.update({name:datetime.date(datetime.now()+timedelta(days=10))})
+                    print(str(books_timeline))
+                    self.books.remove(book)
+                else:
+                    print("User doesnot exist")
+                    user_input = input("Would you like to add user? Click yes to add, no to skip")
+                    if user_input.upper() == 'YES':
+                        new_user_name = input("Please enter the new user name")
+                        add_user(new_user_name)
+                        print("User:"+new_user_name+" has added successfully")
+            else:
+                print("Book is not available")
+            print(self.books)
+        else:
+            del books_lender_list[name]
+            del books_timeline[name]
+            self.books.append(book)
+            print(self.books)
+    def add_user(self,user):
+        self.names.append('user')
+
+list1=['Physics','Chemistry','Maths-I','Maths_II','English','Ethics and Values','Sports']
+names_list=['Sunil','Veeerendra','Saran','Kotesh','Rajesh','Bhaskar','Siva nagu','Karthik','Kesav','Surendra','Naveen']
+books_lender_list={}
+books_timeline={}
+lib=Library(list1,names_list)
+lib.borrow_books('Physics','Sunil','returns')
+
+			
