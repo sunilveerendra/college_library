@@ -6,35 +6,72 @@ Created on Thu May 21 15:23:44 2020
 """
 from datetime import datetime
 from datetime import timedelta
+import cx_Oracle as cx
 #library books management
 class Library:
-    def __init__(self,books,names):
+    def __init__(self,username,password):
+		con = cx.connect(username/password@localhost)
+		cursor=con.cursor()
+		try:
+			cursor.execute("SELECT BOOK_NAME FROM BOOKS")
+			books = cursor.fetchall()
+			cursor.execute("SELECT NAME_OF_THE_STUDENT FROM STUDENTLIST")
+			names=cursor.fetchall()
+		except cx.DatabaseError as e:
+			if con:
+				con.rollback()
+		finally:
+			if cursor:
+				cursor.close()
+			if con:
+				con.close()
         self.books=books
         self.names=names
     def borrow_books(self,book,name):
-        if book in self.books:
+		cursor.execute("select status from books where name=book")
+		status=cursor.fetchone()
+        if status=='AVB':
             if name in self.names:
-                books_lender_list.update({name:book})
-                books_timeline.update({name:datetime.date(datetime.now()+timedelta(days=10))})
-                self.books.remove(book)
+				cursor.execute("insert into books_borrow_list(SNO,NAME,BORROW_DATE)values(1,name,datetime.date(datetime.now()+timedelta(days=10)))")
+                #books_lender_list.update({name:book})
+                #books_timeline.update({name:datetime.date(datetime.now()+timedelta(days=10))})
+                #self.books.remove(book)
+				cursor.execute("UPDATE BOOKS SET STATUS='NOT AVB' WHERE NAME=BOOK")
             else:
-                print("User doesnot exist")
-                user_input = input("Would you like to add user? Click yes to add, no to skip")
-                if user_input.capitalize == 'YES':
-                    new_user_name = input("Please enter the new user name")
-                    add_user(new_user_name)
-                    print("User:"+new_user_name+" has added successfully")
+                print("No student record found")
+                
         else:
             print("Book is not available")
-        print(self.books)
-    def add_user(self,user):
-        self.names.append('user')
+	def lend_books(self,book,student):
+		if name in self.names:
+				cursor.execute("insert into books_lending_list(SNO,NAME,LENDING_DATE)values(1,name,datetime.date(datetime.now()")
+                #books_lender_list.update({name:book})
+                #books_timeline.update({name:datetime.date(datetime.now()+timedelta(days=10))})
+                #self.books.remove(book)
+				cursor.execute("UPDATE BOOKS SET STATUS='AVB' WHERE NAME=BOOK")
+				print("Book has been successfully submitted")
+		else:
+                print("No student record found")
+		
+	
+		
+	
 
-list1=['Physics','Chemistry','Maths-I','Maths_II','English','Ethics and Values','Sports','Biology']
-names_list=['Sunil','Veeerendra','Saran','Kotesh','Rajesh','Bhaskar','Siva nagu','Karthik','Kesav','Surendra','Naveen']
-books_lender_list={}
-books_timeline={}
-lib=Library(list1,names_list)
-lib.borrow_books('Physics','Sunil')
+#list1=['Physics','Chemistry','Maths-I','Maths_II','English','Ethics and Values','Sports','Biology']
+#names_list=['Sunil','Veeerendra','Saran','Kotesh','Rajesh','Bhaskar','Siva nagu','Karthik','Kesav','Surendra','Naveen']
+
+user=input("please enter username to proceed:")
+password=("please enter password:")
+lib=Library(user,password)
+action=input("what do you wanna perform:borrow or lend")
+if action.upper()=='BORROW':
+	book = input("please enter the book name")
+	name=input("please enter  the student name")
+	lib.borrow_books(book,student)
+else:
+	book = input("please enter the book name")
+	name=input("please enter  the student name")
+	lib.lend_books(book,name)
+
 
 			
