@@ -9,69 +9,96 @@ from datetime import timedelta
 import cx_Oracle as cx
 #library books management
 class Library:
-    def __init__(self,username,password):
-		con = cx.connect(username/password@localhost)
-		cursor=con.cursor()
-		try:
-			cursor.execute("SELECT BOOK_NAME FROM BOOKS")
-			books = cursor.fetchall()
-			cursor.execute("SELECT NAME_OF_THE_STUDENT FROM STUDENTLIST")
-			names=cursor.fetchall()
-		except cx.DatabaseError as e:
-			if con:
-				con.rollback()
-		finally:
-			if cursor:
-				cursor.close()
-			if con:
-				con.close()
-        self.books=books
-        self.names=names
-    def borrow_books(self,book,name):
-		cursor.execute("select status from books where name=book")
-		status=cursor.fetchone()
+    @staticmethod
+    def check():
+        try:
+            con,cursor=lib.connection()
+            cursor.execute("SELECT BOOK_NAME FROM BOOKS")
+            print("I have come here")
+            books = cursor.fetchall()
+            print(books)
+            cursor.execute("SELECT NAME_OF_THE_STUDENT FROM STUDENTLIST")
+            names=cursor.fetchall()
+        except cx.DatabaseError as e:
+            if con:
+                con.rollback()
+                print("There is a problem with sql",e)
+        lib.finally_database(con,cursor)
+#        self.books=books
+#        self.names=names
+        return books,names
+    def borrow_books(book,name):
+        try:
+            con,cursor=lib.connection()
+            cursor.execute("select status from books where name=book")
+            status=cursor.fetchone()
+        except cx.DatabaseError as e:
+             if con:
+                con.rollback()
+                print("There is a problem with sql",e)
+        lib.finally_database(con,cursor)
         if status=='AVB':
-            if name in self.names:
-				cursor.execute("insert into books_borrow_list(SNO,NAME,BORROW_DATE)values(1,name,datetime.date(datetime.now()+timedelta(days=10)))")
+            if name in names_detail:
+                cursor.execute("insert into books_borrow_list(SNO,NAME,BORROW_DATE)values(1,name,datetime.date(datetime.now()+timedelta(days=10)))")
                 #books_lender_list.update({name:book})
                 #books_timeline.update({name:datetime.date(datetime.now()+timedelta(days=10))})
                 #self.books.remove(book)
-				cursor.execute("UPDATE BOOKS SET STATUS='NOT AVB' WHERE NAME=BOOK")
+                cursor.execute("UPDATE BOOKS SET STATUS='NOT AVB' WHERE NAME=BOOK")
             else:
                 print("No student record found")
-                
+
         else:
             print("Book is not available")
-	def lend_books(self,book,student):
-		if name in self.names:
-				cursor.execute("insert into books_lending_list(SNO,NAME,LENDING_DATE)values(1,name,datetime.date(datetime.now()")
-                #books_lender_list.update({name:book})
-                #books_timeline.update({name:datetime.date(datetime.now()+timedelta(days=10))})
-                #self.books.remove(book)
-				cursor.execute("UPDATE BOOKS SET STATUS='AVB' WHERE NAME=BOOK")
-				print("Book has been successfully submitted")
-		else:
-                print("No student record found")
+                
+    def lend_books(book,student):
+        try:
+            con,cursor=lib.connection()
+            
+        except cx.DatabaseError as e:
+            if con:
+                con.rollback()
+                print("There is a problem with sql",e)
+        lib.finally_database(con,cursor)
+        if name in names_detail:
+            cursor.execute("insert into books_lending_list(SNO,NAME,LENDING_DATE)values(1,name,datetime.date(datetime.now()")
+            #books_lender_list.update({name:book})
+            #books_timeline.update({name:datetime.date(datetime.now()+timedelta(days=10))})
+            #self.books.remove(book)
+            cursor.execute("UPDATE BOOKS SET STATUS='AVB' WHERE NAME=BOOK")
+            print("Book has been successfully submitted")
+        else:
+            print("No student record found")
+    @staticmethod        
+    def connection():
+        con = cx.connect('developer/sunil143341@localhost')
+        cursor=con.cursor()
+        #print(con.version)
+        return con,cursor
+    
+    def finally_database(con,cursor):
+        if cursor:
+                cursor.close()
+        if con:
+            con.close()
+        
 		
 	
-		
-	
-
-#list1=['Physics','Chemistry','Maths-I','Maths_II','English','Ethics and Values','Sports','Biology']
+#list1=['Physics','-Chemistry','Maths-I','Maths_II','English','Ethics and Values','Sports','Biology']
 #names_list=['Sunil','Veeerendra','Saran','Kotesh','Rajesh','Bhaskar','Siva nagu','Karthik','Kesav','Surendra','Naveen']
 
-user=input("please enter username to proceed:")
-password=("please enter password:")
-lib=Library(user,password)
-action=input("what do you wanna perform:borrow or lend")
+#user=input("please enter username to proceed:\n")
+#password=("please enter password:\n")
+lib=Library()
+books_detail,names_detail=lib.check()
+action=input("what do you wanna perform:borrow or lend:\n")
 if action.upper()=='BORROW':
-	book = input("please enter the book name")
-	name=input("please enter  the student name")
-	lib.borrow_books(book,student)
+    book = input("please enter the book name:\n")
+    name=input("please enter  the student name:\n")
+    lib.borrow_books(books_detail,names_detail,book,name)
 else:
-	book = input("please enter the book name")
-	name=input("please enter  the student name")
-	lib.lend_books(book,name)
+    book = input("please enter the book name:\n")
+    name=input("please enter  the student name:\n")
+    lib.lend_books(books_detail,names_detail,book,name)
 
 
 			
